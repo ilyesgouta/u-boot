@@ -9,6 +9,7 @@
 #define __CONFIG_H
 
 #define CONFIG_SYS_THUMB_BUILD
+#define CONFIG_STM32F7DISCOVERY
 /*#define CONFIG_SYS_NO_FLASH*/
 
 #define CONFIG_BOARD_EARLY_INIT_F
@@ -24,13 +25,15 @@
  * Configuration of the external SDRAM memory
  */
 #define CONFIG_NR_DRAM_BANKS		1
-#define CONFIG_SYS_RAM_SIZE		((64 + 192) << 10)
+#define CONFIG_SYS_SRAM_BASE		0x20000000
+#define CONFIG_SYS_SRAM_SIZE		((64 + 240) << 10)
 #define CONFIG_SYS_RAM_CS		1
 #define CONFIG_SYS_RAM_FREQ_DIV		2
-#define CONFIG_SYS_RAM_BASE		0x20000000
-#define CONFIG_SYS_SDRAM_BASE		CONFIG_SYS_RAM_BASE
-#define CONFIG_SYS_LOAD_ADDR		0x20000000
-#define CONFIG_LOADADDR			0x20000000
+#define CONFIG_SYS_SDRAM_BASE		0xC0000000
+#define CONFIG_SYS_SDRAM_SIZE           (8 * 1024 * 1024)
+
+#define CONFIG_LOADADDR			0xC0600000
+#define CONFIG_SYS_LOAD_ADDR		CONFIG_LOADADDR
 
 #define CONFIG_SYS_MAX_FLASH_SECT	8
 #define CONFIG_SYS_MAX_FLASH_BANKS	1
@@ -55,21 +58,48 @@
 					+ sizeof(CONFIG_SYS_PROMPT) + 16)
 
 #define CONFIG_SYS_MAXARGS		16
-#define CONFIG_SYS_MALLOC_LEN		(16 * 1024)
+#define CONFIG_SYS_MALLOC_LEN		(256 * 1024)
 #define CONFIG_STACKSIZE		(64 << 10)
 
 #define CONFIG_BAUDRATE			115200
-#define CONFIG_BOOTARGS							\
-	"console=ttyS0,115200 earlyprintk consoleblank=0 ignore_loglevel"
-#define CONFIG_BOOTCOMMAND						\
-	"run bootcmd_romfs"
 
 #define CONFIG_EXTRA_ENV_SETTINGS \
-	"bootargs_romfs=uclinux.physaddr=0x08180000 root=/dev/mtdblock0\0" \
-	"bootcmd_romfs=setenv bootargs ${bootargs} ${bootargs_romfs};" \
-	"bootm 0x08044000 - 0x08042000\0"
+	"consoledev=ttyS0\0" \
+	"fdt_addr_r=0xC0580000\0" \
+	"fdt_file=stm32f746-disco.dtb\0"
 
-#define CONFIG_BOOTDELAY		3
+#define CONFIG_HAS_ETH0		1
+
+#define CONFIG_IPADDR		192.168.1.2
+#define CONFIG_HOSTNAME		stm32f746
+#define CONFIG_ROOTPATH		"/var/lib/tftpboot"
+#define CONFIG_BOOTFILE		"uImage"
+#define CONFIG_SERVERIP		192.168.1.1
+#define CONFIG_GATEWAYIP	192.168.1.1
+#define CONFIG_NETMASK		255.255.255.0
+
+#define CONFIG_NFSBOOTCOMMAND \
+   "setenv bootargs root=/dev/nfs rw " \
+      "nfsroot=$serverip:$rootpath " \
+      "ip=$ipaddr:$serverip:$gatewayip:$netmask:$hostname:$netdev:off " \
+      "console=$consoledev,$baudrate earlyprintk consoleblank=0 ignore_loglevel $othbootargs;" \
+   "tftp $loadaddr $bootfile;" \
+   "tftp $fdt_addr_r $fdt_file;" \
+   "fdt addr $fdt_addr_r; fdt resize; fdt chosen;" \
+   "fdt list /chosen;" \
+   "bootm $loadaddr - $fdt_addr_r"
+
+#define CONFIG_BOOTCOMMAND	CONFIG_NFSBOOTCOMMAND
+
+#define CONFIG_BOOTDELAY		2
+#define CONFIG_LOADS_ECHO		1
+
+/* Ethernet Hardware */
+#define CONFIG_CMD_RMII
+#define CONFIG_PHY_SMSC
+#define CONFIG_RMII
+#define CONFIG_NET_RETRY_COUNT		20
+#define CONFIG_DW_ALTDESCRIPTOR		1
 
 /*
  * Command line configuration.
