@@ -17,6 +17,9 @@ void clock_setup(int peripheral)
 	case USART1_CLOCK_CFG:
 		setbits_le32(RCC_BASE + RCC_APB2ENR, RCC_ENR_USART1EN);
 		break;
+	case USART6_CLOCK_CFG:
+		setbits_le32(RCC_BASE + RCC_APB2ENR, RCC_ENR_USART6EN);
+		break;
 	case GPIO_A_CLOCK_CFG:
 		setbits_le32(RCC_BASE + RCC_AHB1ENR, RCC_ENR_GPIO_A_EN);
 		break;
@@ -49,6 +52,20 @@ void clock_setup(int peripheral)
 		break;
 	case GPIO_K_CLOCK_CFG:
 		setbits_le32(RCC_BASE + RCC_AHB1ENR, RCC_ENR_GPIO_K_EN);
+		break;
+	case ETH_CLOCK_CFG:
+		setbits_le32(RCC_BASE + RCC_AHB1ENR, RCC_ENR_ETHMAC_EN);
+		setbits_le32(RCC_BASE + RCC_AHB1ENR, RCC_ENR_ETHMACTX_EN);
+		setbits_le32(RCC_BASE + RCC_AHB1ENR, RCC_ENR_ETHMACRX_EN);
+		break;
+	case FMC_CLOCK_CFG:
+		setbits_le32(RCC_BASE + RCC_AHB3ENR, RCC_ENR_FMC_EN);
+		break;
+	case QSPI_CLOCK_CFG:
+		setbits_le32(RCC_BASE + RCC_AHB3ENR, RCC_ENR_QSPI_EN);
+		break;
+	case SYSCFG_CLOCK_CFG:
+		setbits_le32(RCC_BASE + RCC_APB2ENR, RCC_ENR_SYSCFG_EN);
 		break;
 	default:
 		break;

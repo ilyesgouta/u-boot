@@ -61,4 +61,18 @@
 #define RCC_ENR_GPIO_J_EN		(1 << 9)
 #define RCC_ENR_GPIO_K_EN		(1 << 10)
 
+/* Ethernet */
+#define RCC_ENR_ETHMAC_EN               (1 << 25)
+#define RCC_ENR_ETHMACTX_EN             (1 << 26)
+#define RCC_ENR_ETHMACRX_EN             (1 << 27)
+
+/* FMC */
+#define RCC_ENR_FMC_EN                  (1 << 0)
+
+/* QSPI */
+#define RCC_ENR_QSPI_EN                 (1 << 1)
+
+/* SYSCFG */
+#define RCC_ENR_SYSCFG_EN		(1 << 14)
+
 #endif
