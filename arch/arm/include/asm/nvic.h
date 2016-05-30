@@ -1,0 +1,138 @@
+/*
+ * (C) Copyright 2016
+ * Ilyes Gouta, ilyes.gouta@gmail.com.
+ *
+ * SPDX-License-Identifier:	GPL-2.0+
+ */
+
+#ifndef __NVIC_H__
+#define __NVIC_H__
+
+/* Register offsets for the ARM nest vector interrupt controller (NVIC) */
+
+#define SC_ACTLR	0xE000E008
+#define SC_SYST_CSR	0xE000E010
+#define SC_SYST_RVR	0xE000E014
+#define SC_SYST_CVR	0xE000E018
+#define SC_SYST_CALIB	0xE000E01C
+#define SC_CPUID	0xE000ED00
+#define SC_ICSR		0xE000ED04
+#define SC_VTOR		0xE000ED08
+#define SC_AIRCR	0xE000ED0C
+#define SC_SCR		0xE000ED10
+#define SC_CCR		0xE000ED14
+#define SC_SHPR1	0xE000ED18
+#define SC_SHPR2	0xE000ED1C
+#define SC_SHPR3	0xE000ED20
+#define SC_SHCSR	0xE000ED24
+#define SC_CFSR		0xE000ED28
+#define SC_HFSR		0xE000ED2C
+#define SC_DFSR		0xE000ED30
+#define SC_MMFAR	0xE000ED34
+#define SC_BFAR		0xE000ED38
+#define SC_ID_PFR0	0xE000ED40
+#define SC_ID_PFR1	0xE000ED44
+#define SC_ID_DFR0	0xE000ED48
+#define SC_ID_AFR0	0xE000ED4C
+#define SC_ID_MMFR0	0xE000ED50
+#define SC_ID_MMFR1	0xE000ED54
+#define SC_ID_MMFR2	0xE000ED58
+#define SC_ID_MMFR3	0xE000ED5C
+#define SC_ID_ISAR0	0xE000ED60
+#define SC_ID_ISAR1	0xE000ED64
+#define SC_ID_ISAR2	0xE000ED68
+#define SC_ID_ISAR3	0xE000ED6C
+#define SC_ID_ISAR4	0xE000ED70
+#define SC_CLIDR	0xE000ED78
+#define SC_CTR		0xE000ED7C
+#define SC_CCSIDR	0xE000ED80
+#define SC_CSSELR	0xE000ED84
+#define SC_CPACR	0xE000ED88
+#define SC_STIR		0xE000EF00
+#define SC_ICIALLU	0xE000EF50
+#define SC_ICIMVAU	0xE000EF58
+#define SC_DCIMVAC	0xE000EF5C
+#define SC_DCISW	0xE000EF60
+#define SC_DCCMVAU	0xE000EF64
+#define SC_DCCMVAC	0xE000EF68
+#define SC_DCCSW	0xE000EF6C
+#define SC_DCCIMVAC	0xE000EF70
+#define SC_DCCISW	0xE000EF74
+#define SC_BPIALL	0xE000EF78
+#define SC_CM7_ITCMCR	0xE000EF90
+#define SC_CM7_DTCMCR	0xE000EF94
+#define SC_CM7_AHBPCR	0xE000EF98
+#define SC_CM7_CACR	0xE000EF9C
+#define SC_CM7_AHBSCR	0xE000EFA0
+#define SC_CM7_ABFSR	0xE000EFA8
+#define SC_IEBR0	0xE000EFB0
+#define SC_IEBR1	0xE000EFB4
+#define SC_DEBR0	0xE000EFB8
+#define SC_DEBR1	0xE000EFBC
+
+#define NVIC_ICTR	0xE000E004
+
+/* Interrupt Set-Enable Registers */
+#define NVIC_ISER0	0xE000E100
+#define NVIC_ISER1	0xE000E104
+#define NVIC_ISER2	0xE000E108
+#define NVIC_ISER3	0xE000E10C
+#define NVIC_ISER4	0xE000E110
+#define NVIC_ISER5	0xE000E114
+#define NVIC_ISER6	0xE000E118
+#define NVIC_ISER7	0xE000E11C
+#define NVIC_ISER_BASE	NVIC_ISER0
+
+/* Interrupt Clear-Enable Registers */
+#define NVIC_ICER0	0xE000E180
+#define NVIC_ICER1	0xE000E184
+#define NVIC_ICER2	0xE000E188
+#define NVIC_ICER3	0xE000E18C
+#define NVIC_ICER4	0xE000E190
+#define NVIC_ICER5	0xE000E194
+#define NVIC_ICER6	0xE000E198
+#define NVIC_ICER7	0xE000E19C
+#define NVIC_ICER_BASE	NVIC_ICER0
+
+/* Interrupt Set-Pending Registers */
+#define NVIC_ISPR0	0xE000E200
+#define NVIC_ISPR1	0xE000E204
+#define NVIC_ISPR2	0xE000E208
+#define NVIC_ISPR3	0xE000E20C
+#define NVIC_ISPR4	0xE000E210
+#define NVIC_ISPR5	0xE000E214
+#define NVIC_ISPR6	0xE000E218
+#define NVIC_ISPR7	0xE000E21C
+#define NVIC_ISPR_BASE	NVIC_ISPR0
+
+/* Interrupt Clear-Pending Registers */
+#define NVIC_ICPR0	0xE000E280
+#define NVIC_ICPR1	0xE000E284
+#define NVIC_ICPR2	0xE000E288
+#define NVIC_ICPR3	0xE000E28C
+#define NVIC_ICPR4	0xE000E290
+#define NVIC_ICPR5	0xE000E294
+#define NVIC_ICPR6	0xE000E298
+#define NVIC_ICPR7	0xE000E29C
+#define NVIC_ICPR_BASE	NVIC_ICPR0
+
+/* Interrupt Active Bit Register */
+#define NVIC_IABR0	0xE000E300
+#define NVIC_IABR1	0xE000E304
+#define NVIC_IABR2	0xE000E308
+#define NVIC_IABR3	0xE000E30C
+#define NVIC_IABR4	0xE000E310
+#define NVIC_IABR5	0xE000E314
+#define NVIC_IABR6	0xE000E318
+#define NVIC_IABR7	0xE000E31C
+#define NVIC_IABR_BASE	NVIC_IABR0
+
+/* Interrupt Priority Register (NVIC_IPR0 - NVIC_IPR59, up to 0xE000E4EC) */
+#define NVIC_IPR_BASE	0xE000E400
+
+void nvic_irq_enable(int irq);
+void nvic_irq_disable(int irq);
+
+void nvic_irq_setpriority(int irq, int prio);
+
+#endif /* __NVIC_H__ */

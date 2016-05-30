@@ -11,6 +11,7 @@
 #include <common.h>
 #include <asm/io.h>
 #include <asm/armv7m.h>
+#include <asm/nvic.h>
 
 /*
  * This is called right before passing control to
@@ -32,4 +33,30 @@ void reset_cpu(ulong addr)
 	writel((V7M_AIRCR_VECTKEY << V7M_AIRCR_VECTKEY_SHIFT)
 		| (V7M_SCB->aircr & V7M_AIRCR_PRIGROUP_MSK)
 		| V7M_AIRCR_SYSRESET, &V7M_SCB->aircr);
+}
+
+void nvic_irq_enable(int irq)
+{
+	int base = irq / 32;
+	int offset = irq & 0x1f;
+	unsigned long value;
+
+	value = readl(NVIC_ISER_BASE + base * 4);
+	value |= (1 << offset);
+	writel(value, NVIC_ISER_BASE + base * 4);
+}
+
+void nvic_irq_disable(int irq)
+{
+	int base = irq / 32;
+	int offset = irq & 0x1f;
+	unsigned long value;
+
+	value = readl(NVIC_ISER_BASE + base * 4);
+	value &= ~(1 << offset);
+	writel(value, NVIC_ISER_BASE + base * 4);
+}
+
+void nvic_irq_setpriority(int irq, int prio)
+{
 }
