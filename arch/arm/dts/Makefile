@@ -233,6 +233,8 @@ dtb-$(CONFIG_SOC_KEYSTONE) += k2hk-evm.dtb \
 	k2e-evm.dtb \
 	k2g-evm.dtb
 
+dtb-$(CONFIG_TARGET_STM32F746_DISCO) += stm32f746-disco.dtb
+
 targets += $(dtb-y)
 
 # Add any required device tree compiler flags here
