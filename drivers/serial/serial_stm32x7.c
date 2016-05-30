@@ -28,8 +28,8 @@ static int stm32_serial_getc(struct udevice *dev)
 	struct stm32x7_serial_platdata *plat = dev->platdata;
 	struct stm32_usart *const usart = plat->base;
 
-	if ((readl(&usart->sr) & USART_SR_FLAG_RXNE) == 0)
-		return -EAGAIN;
+	while ((readl(&usart->sr) & USART_SR_FLAG_RXNE) == 0)
+		continue;
 
 	return readl(&usart->rd_dr);
 }
