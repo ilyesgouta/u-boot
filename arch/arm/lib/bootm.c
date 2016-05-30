@@ -296,7 +296,7 @@ static void boot_jump_linux(bootm_headers_t *images, int flag)
 	unsigned long r2;
 	int fake = (flag & BOOTM_STATE_OS_FAKE_GO);
 
-	kernel_entry = (void (*)(int, int, uint))images->ep;
+	kernel_entry = (void (*)(int, int, uint))(images->ep|1);
 
 	s = getenv("machid");
 	if (s) {
