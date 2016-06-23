@@ -51,7 +51,7 @@ const struct stm32_gpio_ctl gpio_ctl_eth = {
 const struct stm32_gpio_ctl gpio_ctl_sdram = {
 	.mode = STM32_GPIO_MODE_AF,
 	.otype = STM32_GPIO_OTYPE_PP,
-	.speed = STM32_GPIO_SPEED_50M,
+	.speed = STM32_GPIO_SPEED_100M,
 	.pupd = STM32_GPIO_PUPD_UP,
 	.af = STM32_GPIO_AF12
 };
