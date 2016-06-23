@@ -24,14 +24,6 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
-const struct stm32_gpio_ctl gpio_ctl_gpout = {
-	.mode = STM32_GPIO_MODE_OUT,
-	.otype = STM32_GPIO_OTYPE_PP,
-	.speed = STM32_GPIO_SPEED_50M,
-	.pupd = STM32_GPIO_PUPD_NO,
-	.af = STM32_GPIO_AF0
-};
-
 const struct stm32_gpio_ctl gpio_ctl_usart = {
 	.mode = STM32_GPIO_MODE_AF,
 	.otype = STM32_GPIO_OTYPE_PP,
