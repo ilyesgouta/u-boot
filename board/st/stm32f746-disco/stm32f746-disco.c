@@ -15,6 +15,7 @@
 #include <dm/platdata.h>
 #include <dm/platform_data/serial_stm32x7.h>
 #include <asm/arch/stm32_periph.h>
+#include <asm/arch/rcc.h>
 #include <asm/arch/stm32_defs.h>
 #include <miiphy.h>
 #include <asm/nvic.h>
@@ -177,8 +178,7 @@ out:
 }
 
 static const struct stm32x7_serial_platdata serial_platdata = {
-	.base = (struct stm32_usart *)USART6_BASE,
-	.clock = CONFIG_SYS_CLK_FREQ,
+	.base = (struct stm32_usart *)USART6_BASE
 };
 
 U_BOOT_DEVICE(stm32x7_serials) = {
@@ -234,9 +234,9 @@ static void sdram_init(void)
 
 	val = readl(FMC_BASE + FMC_SDCR1);
 
-	val &= (uint32_t)~(FMC_SDCR1_NC | FMC_SDCR1_NR | FMC_SDCR1_MWID |
-			   FMC_SDCR1_NB | FMC_SDCR1_CAS | FMC_SDCR1_WP |
-			   FMC_SDCR1_SDCLK | FMC_SDCR1_RBURST | FMC_SDCR1_RPIPE);
+	val &= (uint32_t)~(FMC_SDCR1_NC|FMC_SDCR1_NR|FMC_SDCR1_MWID|
+			   FMC_SDCR1_NB|FMC_SDCR1_CAS|FMC_SDCR1_WP|
+			   FMC_SDCR1_SDCLK|FMC_SDCR1_RBURST|FMC_SDCR1_RPIPE);
 
 	val |= (uint32_t)(FMC_SDRAM_COLUMN_BITS_NUM_8
 			  | FMC_SDRAM_ROW_BITS_NUM_12
@@ -254,16 +254,16 @@ static void sdram_init(void)
 
 	val = readl(FMC_BASE + FMC_SDTR1);
 
-	val &= ((uint32_t)~(FMC_SDTR1_TMRD  | FMC_SDTR1_TXSR | FMC_SDTR1_TRAS |
-			    FMC_SDTR1_TRC  | FMC_SDTR1_TWR | FMC_SDTR1_TRP | FMC_SDTR1_TRCD));
+	val &= ((uint32_t)~(FMC_SDTR1_TMRD|FMC_SDTR1_TXSR|FMC_SDTR1_TRAS|
+			    FMC_SDTR1_TRC|FMC_SDTR1_TWR|FMC_SDTR1_TRP|FMC_SDTR1_TRCD));
 
-	val |= (uint32_t)((2 - 1)		/* TMRD */
-			  | ((7 - 1) << 4)	/* TXSR */
-			  | ((4 - 1) << 8)	/* TRAS */
-			  | ((7 - 1) << 12)	/* TRC */
-			  | ((2 - 1) << 16)	/* TWR */
-			  | ((2 - 1) << 20)	/* TRP */
-			  | ((2 - 1) << 24));	/* TRCD */
+	val |= (uint32_t)((16 - 1)		/* TMRD */
+			  | ((16 - 1) << 4)	/* TXSR */
+			  | ((16 - 1) << 8)	/* TRAS */
+			  | ((16 - 1) << 12)	/* TRC */
+			  | ((16 - 1) << 16)	/* TWR */
+			  | ((16 - 1) << 20)	/* TRP */
+			  | ((16 - 1) << 24));	/* TRCD */
 
 	writel(val, FMC_BASE + FMC_SDTR1);
 }
@@ -276,13 +276,10 @@ static void sdram_command(int command, int refresh, int mode)
 			 | FMC_SDCMR_CTB1
 			 | ((refresh - 1) << 5)
 			 | (mode << 9));
-
 	writel(val, FMC_BASE + FMC_SDCMR);
 
-	do {
-		val = readl(FMC_BASE + FMC_SDSR);
-		val &= FMC_SDSR_BUSY;
-	} while (val);
+	while (readl(FMC_BASE + FMC_SDSR) & FMC_SDSR_BUSY)
+		;
 }
 
 static void sdram_enable(void)
@@ -305,13 +302,16 @@ static void sdram_enable(void)
 	sdram_command(FMC_SDRAM_CMD_LOAD_MODE, 1, val);
 
 	val = readl(FMC_BASE + FMC_SDRTR);
-	val |= (0x603 << 1); /* refresh count */
+	val &= ~0x3ffe;
+	val |= (448 << 1); /* refresh count */
 	writel(val, FMC_BASE + FMC_SDRTR);
 }
 
 int dram_init(void)
 {
 	uint32_t val;
+	uint32_t size = 22; /* 8Mb of RAM */
+	uint32_t texsbc = 0x29;
 
 	sdram_init();
 	sdram_enable();
@@ -321,15 +321,12 @@ int dram_init(void)
 
 	gd->ram_size = CONFIG_SYS_SDRAM_SIZE;
 
-	/* MPU configuration for the SDRAM region */
-
-	writel(0, MPU_BASE + MPU_RNR);
-	writel(CONFIG_SYS_SDRAM_BASE | 0, MPU_BASE + MPU_RBAR); /* configure SDRAM bank */
-
-	val = 1 | (22 << 1) | (0x29 << 16) | (0x3 << 24); /* clear XN */
-	writel(val, MPU_BASE + MPU_RASR);
-
-	writel(0x5, MPU_BASE + MPU_CTRL); /* enable MPU */
+	/* MPU configuration for executing from SDRAM */
+	writel(0, &V7M_MPU->rnr);
+	writel(CONFIG_SYS_SDRAM_BASE | 0, &V7M_MPU->rbar);
+	val = V7M_MPU_RASR_EN | (size << 1) | (texsbc << 16) | V7M_MPU_RASR_AP_RW_RW; /* XN bit unset */
+	writel(val, &V7M_MPU->rasr);
+	writel(V7M_MPU_CTRL_ENABLE | V7M_MPU_CTRL_PRIVDEFENA, &V7M_MPU->ctrl);
 
 	return 0;
 }

@@ -11,7 +11,6 @@
 /* Information about a serial port */
 struct stm32x7_serial_platdata {
 	struct stm32_usart *base;  /* address of registers in physical memory */
-	unsigned int clock;
 };
 
 #endif /* __SERIAL_STM32x7_H */

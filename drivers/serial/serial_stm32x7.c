@@ -10,15 +10,29 @@
 #include <asm/io.h>
 #include <serial.h>
 #include <dm/platform_data/serial_stm32x7.h>
+#include <asm/arch-stm32f7/stm32.h>
 #include "serial_stm32x7.h"
-
 DECLARE_GLOBAL_DATA_PTR;
 
 static int stm32_serial_setbrg(struct udevice *dev, int baudrate)
 {
 	struct stm32x7_serial_platdata *plat = dev->platdata;
 	struct stm32_usart *const usart = plat->base;
-	writel(plat->clock/baudrate, &usart->brr);
+
+	u32  clock, int_div, frac_div, tmp;
+
+	if (((u32)usart & STM32_BUS_MASK) == APB1_PERIPH_BASE)
+		clock = clock_get(CLOCK_APB1);
+	else if (((u32)usart & STM32_BUS_MASK) == APB2_PERIPH_BASE)
+		clock = clock_get(CLOCK_APB2);
+	else
+		return -EINVAL;
+
+	int_div = (25 * clock) / (4 * baudrate);
+	tmp = ((int_div / 100) << USART_BRR_M_SHIFT) & USART_BRR_M_MASK;
+	frac_div = int_div - (100 * (tmp >> USART_BRR_M_SHIFT));
+	tmp |= (((frac_div * 16) + 50) / 100) & USART_BRR_F_MASK;
+	writel(tmp, &usart->brr);
 
 	return 0;
 }

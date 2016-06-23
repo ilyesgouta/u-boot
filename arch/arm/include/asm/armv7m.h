@@ -50,6 +50,7 @@ struct v7m_mpu {
 
 #define V7M_MPU_CTRL_ENABLE		(1 << 0)
 #define V7M_MPU_CTRL_HFNMIENA		(1 << 1)
+#define V7M_MPU_CTRL_PRIVDEFENA		(1 << 2)
 
 #define V7M_MPU_RASR_EN			(1 << 0)
 #define V7M_MPU_RASR_SIZE_BITS		1
