@@ -29,10 +29,10 @@
 #define CONFIG_SYS_SRAM_SIZE		((64 + 240) << 10)
 #define CONFIG_SYS_RAM_CS		1
 #define CONFIG_SYS_RAM_FREQ_DIV		2
-#define CONFIG_SYS_SDRAM_BASE		0xC0000000
+#define CONFIG_SYS_SDRAM_BASE		0xc0000000
 #define CONFIG_SYS_SDRAM_SIZE           (8 * 1024 * 1024)
 
-#define CONFIG_LOADADDR			0xC0600000
+#define CONFIG_LOADADDR			0xc0008000
 #define CONFIG_SYS_LOAD_ADDR		CONFIG_LOADADDR
 
 #define CONFIG_SYS_MAX_FLASH_SECT	8
@@ -61,7 +61,7 @@
 
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	"consoledev=ttyS0\0" \
-	"fdt_addr_r=0xC0580000\0" \
+	"fdt_addr_r=0xc0002000\0" \
 	"fdt_file=stm32f746-disco.dtb\0"
 
 #define CONFIG_HAS_ETH0		1
